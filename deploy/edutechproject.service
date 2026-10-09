@@ -1,0 +1,47 @@
+[Unit]
+Description=EduTechProject isolated learning application
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=edutechproject
+Group=edutechproject
+WorkingDirectory=/opt/edutechproject
+EnvironmentFile=/etc/edutechproject/environment
+ExecStart=/opt/edutechproject-runtime/bin/node /opt/edutechproject/server/index.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+UMask=0077
+StateDirectory=edutechproject
+StateDirectoryMode=0700
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/var/lib/edutechproject
+IPAddressDeny=any
+IPAddressAllow=localhost
+MemoryHigh=192M
+MemoryMax=256M
+MemorySwapMax=64M
+CPUQuota=50%
+TasksMax=32
+LimitNOFILE=1024
+LimitFSIZE=134217728
+
+[Install]
+WantedBy=multi-user.target

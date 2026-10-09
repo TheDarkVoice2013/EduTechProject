@@ -1,0 +1,9 @@
+# Insert only inside the EXISTING 79.108.160.80 site block.
+# Keep all existing routes and TLS/ACME configuration unchanged.
+# This is a path, not a DNS subdomain. Use a dedicated hostname for browser-origin isolation.
+# BEGIN EDUTECHPROJECT
+redir /edutechproject /edutechproject/ 308
+handle /edutechproject/* {
+    reverse_proxy 127.0.0.1:3847
+}
+# END EDUTECHPROJECT
