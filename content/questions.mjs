@@ -6,6 +6,7 @@
 // Powers/logs: https://files.eric.ed.gov/fulltext/ED477690.pdf
 // Meaning and domains: https://files.eric.ed.gov/fulltext/EJ1093384.pdf
 // Error analysis: https://math.nie.edu.sg/ame/matheduc/tme/tmeV8_2/Final%20Chua%20Wood.pdf
+import { dutchQuestions } from './questions-nl.mjs';
 const math = String.raw;
 const choices = (...texts) => texts.map((text, index) => ({ id: 'abcd'[index], text }));
 const published = question => ({ ...question, published: true });
@@ -263,4 +264,8 @@ export const questions = [
     misconception: 'An unknown exponent is isolated using a logarithm, not by dividing the result by the base.',
     sourceTags: ['weber', 'kenney'],
   },
-].map(published);
+].map(published).map(question => {
+  const translated = dutchQuestions[question.id];
+  if (!translated || translated.options.length !== question.options.length) throw new Error(`Missing Dutch question: ${question.id}`);
+  return { ...question, translations: { nl: { ...translated, options: question.options.map((option, index) => ({ ...option, text: translated.options[index] })) } } };
+});

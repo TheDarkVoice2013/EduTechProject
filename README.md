@@ -1,6 +1,12 @@
 # EduTechProject
 
-An English-language mathematics learning site inspired by the four-step progression of Școala Rutieră, with original lessons, questions and interface design. It teaches equations/isolating x and logarithms, then separates explained practice from timed self-assessment.
+A Dutch-first mathematics learning site with an English language switch, inspired by the four-step progression of Școala Rutieră. Original lessons teach equations/isolating x and logarithms, then separate explained practice from timed self-assessment. The starting point assumes basic arithmetic, not algebra vocabulary, and uses an age-appropriate tone for young adults.
+
+## An easier starting point
+
+The lessons introduce `x`, `=` and filling in a value before formal transformations. Ten responsive diagrams connect symbols to balance, undoing steps, brackets, powers and valid logarithm inputs; five include controls to explore the steps. Underlined words open keyboard- and touch-accessible definitions without leaving the lesson. A searchable Dutch/English word list gives meanings and examples, including expression, set, operation and substitute.
+
+The language switch translates the interface, all ten lessons, the 28 starter questions, hints, feedback and exam text. The choice is remembered locally; lesson IDs/progress stay the same. Changing language does not reset an exam deadline. Glossary helpers are deliberately absent from exam questions and answer options.
 
 ## Four phases
 
@@ -58,7 +64,9 @@ sudo bash /opt/edutechproject/scripts/moderator.sh create YOUR_USERNAME admin
 
 The password prompt is hidden and pipes directly into the CLI. Never reuse the VPS root password.
 
-Questions imported by a moderator must follow the shape in [CONTRACT.md](CONTRACT.md); a valid exportable example is supplied by the editor. Imports create new IDs only; edit existing questions through the editor. Questions can be unpublished without destroying their history. Source content is seeded only if an ID is missing, so deployment never silently overwrites moderator edits.
+Questions imported by a moderator must follow the shape in [CONTRACT.md](CONTRACT.md); a valid exportable example is supplied by the editor. Imports create new IDs only; edit existing questions through the editor. Questions can be unpublished without destroying their history. The editor has separate English and Dutch content tabs. English is the required base; Dutch is optional but must be complete when supplied. An untranslated custom question is explicitly labelled as English in the Dutch interface. The correct option and option IDs are shared across languages.
+
+Source content is seeded only if an ID is missing. The Dutch starter-bank migration adds a translation only when the stored English question exactly matches the untouched original seed, has revision 1, and has no revision history. This addition is audited and idempotent. Any moderator-edited question is preserved and can be translated in the editor; existing exam snapshots are not changed.
 
 ## Tests
 

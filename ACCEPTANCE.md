@@ -2,6 +2,8 @@
 
 ## Learner
 
+Before the main walkthrough, verify a fresh visit defaults to Dutch, both language buttons work and the choice survives reload. Switch on a lesson without losing checkpoint selection/progress. Tap an underlined word, read its example, close with Escape and check focus and reading position return. Search both Dutch and English terms in the word list and open a direct word link. Use the balance/powers diagrams on a phone; ensure no clipping and that the text alternative explains each picture. Check all ten lessons in both languages.
+
 1. Open the homepage on desktop and phone. Navigate all four phases with keyboard and touch.
 2. Open the first equality lesson. Follow each legal operation, open “Why we teach it this way”, and check the original paper link.
 3. Try a wrong checkpoint answer, read the explanation, correct it and mark the lesson complete. Reload: progress should remain in this browser.
@@ -9,6 +11,8 @@
 5. Open the logarithm lessons. Confirm the positive-argument/base restrictions, power↔log conversion and the worked `ln(x−2)=3` example are clear.
 6. In practice, filter topics. Try the optional hint, submit an incorrect answer, then examine the explanation, misconception and paper notes. No correctness appears before submission.
 7. Start a mixed 10-question exam. Verify there are no hints or worked explanations; refresh during a question and confirm its deadline does not reset. Let one expire, then submit another. End early and inspect the score.
+
+During that exam, select an option and switch language. The selected option, current question and deadline must remain the same (except normal expiry). No inline definition buttons should appear in the question/options. Practice should retain the current question when switching, reset visible feedback to avoid mixed languages, and provide localized feedback on re-submission.
 8. Try a second browser/session: it must not be able to retrieve the first session's exam by ID.
 9. Reset browser-local progress through the privacy/progress control. Existing server exam records follow server retention; resetting browser progress is not an account/data-deletion request.
 
@@ -20,6 +24,8 @@
 4. Import valid JSON with new IDs. Invalid JSON, HTML, unknown fields, duplicate IDs or a correct-answer ID absent from the options must be rejected without partial imports.
 5. Unpublish the test item rather than deleting its history. Sign out; moderator requests must fail afterwards.
 6. Reset the moderator's password from the CLI. The old authenticated session must no longer work.
+
+Use a local test draft to switch between English/Dutch content tabs and the interface language without losing either draft. Save/reopen both variants. Reject incomplete translations, reordered/mismatched option IDs and extra answer keys inside translations. Verify English-only custom questions show a clear fallback notice. Before a production migration, verify a backup and confirm modified questions remain untouched.
 
 ## Operations
 

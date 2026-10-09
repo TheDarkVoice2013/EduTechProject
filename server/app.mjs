@@ -4,7 +4,7 @@ import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { DatabaseSync } from 'node:sqlite';
 import { randomBytes, randomUUID, createHash, scrypt as rawScrypt, timingSafeEqual, randomInt } from 'node:crypto';
-import { promisify } from 'node:util';
+import { promisify, isDeepStrictEqual } from 'node:util';
 import { mkdirSync, chmodSync } from 'node:fs';
 import path from 'node:path';
 
@@ -71,6 +71,13 @@ const slug = z.string().min(1).max(100).regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/);
 const plain = (max = 1500) => z.string().max(max).refine((s) => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(s) && !/<\s*\/?\s*[a-z!][^>]*>/i.test(s), 'Use plain text, not HTML');
 const math = plain(1200).refine((s) => !/\\(?:href|url|html\w*|includegraphics|class|style|cssId|def|gdef|newcommand|renewcommand|catcode|require)\b/i.test(s), 'Unsafe math command');
 const optionId = z.enum(['a', 'b', 'c', 'd']);
+const translatedQuestion = z.object({
+  prompt: plain(1500).refine((s) => s.trim().length > 0, 'Translated prompt is required'),
+  options: z.array(z.object({ id: optionId, text: plain(800), math: math.optional() }).strict()).min(2).max(4),
+  hint: plain(1500).refine(s => s.trim().length > 0, 'Translated hint is required'),
+  explanation: z.array(plain(2500).refine(s => s.trim().length > 0, 'Translated explanation is required')).min(1).max(15),
+  misconception: plain(1500).refine(s => s.trim().length > 0, 'Translated misconception is required'),
+}).strict();
 export const questionSchema = z.object({
   id: slug,
   topic: z.enum(['equations', 'logarithms']),
@@ -84,9 +91,12 @@ export const questionSchema = z.object({
   misconception: plain(1500),
   sourceTags: z.array(z.enum(['otten', 'ngu', 'rittle', 'weber', 'kenney', 'chua'])).max(6),
   published: z.boolean(),
+  translations: z.object({ nl: translatedQuestion.optional() }).strict().optional(),
 }).strict().superRefine((q, ctx) => {
   if (new Set(q.options.map((o) => o.id)).size !== q.options.length) ctx.addIssue({ code: 'custom', message: 'Option IDs must be unique' });
   if (!q.options.some((o) => o.id === q.correctOptionId)) ctx.addIssue({ code: 'custom', message: 'Correct option must exist' });
+  if (q.translations?.nl && !isDeepStrictEqual(q.options.map(o => o.id), q.translations.nl.options.map(o => o.id))) ctx.addIssue({ code: 'custom', message: 'Translated options must use the same IDs and order as English' });
+  if (q.translations?.nl?.options.some(o => !o.text.trim() && !o.math?.trim())) ctx.addIssue({ code: 'custom', message: 'Translated options require text or math' });
 });
 
 export function createDatabase({ filename, questions = [], limits: overrides = {} }) {
@@ -112,6 +122,21 @@ export function createDatabase({ filename, questions = [], limits: overrides = {
     if (missing.length) checkContentBudget(db, limits, { questionCount: missing.length, questionBytes: missing.reduce((n, q) => n + Buffer.byteLength(JSON.stringify(q)), 0) });
     const insert = db.prepare('INSERT OR IGNORE INTO questions(id,data,updated_at) VALUES(?,?,?)');
     for (const q of valid) insert.run(q.id, JSON.stringify(q), Date.now());
+    // Add the first Dutch translation only to untouched original seeds. Never
+    // replace moderator-authored text, translations, revisions or exam snapshots.
+    for (const q of valid.filter(item => item.translations?.nl)) {
+      const row = db.prepare('SELECT data,revision FROM questions WHERE id=?').get(q.id);
+      const old = JSON.parse(row.data);
+      const { translations, ...english } = q;
+      if (old.translations || row.revision !== 1 || !isDeepStrictEqual(old, english) || db.prepare('SELECT id FROM question_revisions WHERE question_id=? LIMIT 1').get(q.id)) continue;
+      const data = JSON.stringify(q);
+      checkContentBudget(db, limits, { questionBytes: Buffer.byteLength(data) - Buffer.byteLength(row.data), revisions: [row.data, data] });
+      const time = Date.now();
+      const saveRevision = db.prepare('INSERT INTO question_revisions(question_id,revision,data,user_id,created_at) VALUES(?,?,?,NULL,?)');
+      saveRevision.run(q.id, 1, row.data, time); saveRevision.run(q.id, 2, data, time);
+      db.prepare('UPDATE questions SET data=?,revision=2,updated_at=? WHERE id=?').run(data, time, q.id);
+      db.prepare('INSERT INTO audit(user_id,username,action,question_id,created_at) VALUES(NULL,?,?,?,?)').run('system', 'question.translation', q.id, time);
+    }
   });
   return db;
 }
@@ -152,12 +177,23 @@ export async function provisionUser(db, { username, password, role = 'moderator'
   });
 }
 
-function publicQuestion(q, exam = false) {
-  const { correctOptionId, explanation, misconception, ...safe } = q;
+function localizeQuestion(q, language) {
+  const translated = language === 'nl' ? q.translations?.nl : null;
+  return { ...q, ...(translated || {}), language: translated ? 'nl' : 'en', requestedLanguage: language };
+}
+function publicQuestion(q, exam = false, language = 'en') {
+  const { correctOptionId, explanation, misconception, translations, ...safe } = localizeQuestion(q, language);
   return exam ? { ...safe, hint: '' } : safe;
 }
+function snapshotQuestion(q) {
+  const safe = { ...publicQuestion(q, true, 'en'), correctOptionId: q.correctOptionId };
+  // Keep both display variants immutable, but never duplicate learning feedback
+  // into exams. Locale changes only select a display variant, not a new attempt.
+  if (q.translations?.nl) safe.translations = { nl: { prompt: q.translations.nl.prompt, options: q.translations.nl.options, hint: '' } };
+  return safe;
+}
 
-export function createApp({ db, lessons = [], sources = [], basePath = '', appOrigin = 'http://localhost:5173', secureCookies = true, trustProxy = false, distDir, now = Date.now, enableRateLimits = true, limits: overrides = {} }) {
+export function createApp({ db, lessons = [], sources = [], lessonsNl = lessons, sourcesNl = sources, basePath = '', appOrigin = 'http://localhost:5173', secureCookies = true, trustProxy = false, distDir, now = Date.now, enableRateLimits = true, limits: overrides = {} }) {
   const limits = resolveLimits(overrides);
   let lastPrune = -Infinity;
   function maybePrune(force = false) {
@@ -222,17 +258,23 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
   const validated = (schema, data, res) => { const parsed = schema.safeParse(data); if (!parsed.success) { res.status(400).json({ error: `Invalid request: ${parsed.error.issues.slice(0, 3).map((i) => i.message).join('; ')}` }); return null; } return parsed.data; };
   const questionsList = () => db.prepare('SELECT data FROM questions ORDER BY id').all().map((r) => JSON.parse(r.data));
   const getQuestion = (id) => { const row = db.prepare('SELECT data,revision FROM questions WHERE id=?').get(id); return row ? { ...row, question: JSON.parse(row.data) } : null; };
-  router.get('/api/content', (_req, res) => res.json({ lessons, sources }));
+  router.use('/api', (req, res, next) => {
+    if (req.query.lang !== undefined && !['nl', 'en'].includes(req.query.lang)) return res.status(400).json({ error: 'Invalid language' });
+    req.contentLanguage = req.query.lang === 'en' ? 'en' : 'nl';
+    next();
+  });
+  router.get('/api/content', (req, res) => res.json(req.contentLanguage === 'nl' ? { lessons: lessonsNl, sources: sourcesNl } : { lessons, sources }));
   router.get('/api/questions', (req, res) => {
     if (req.query.topic && !['equations', 'logarithms'].includes(req.query.topic)) return res.status(400).json({ error: 'Invalid topic' });
-    res.json({ questions: questionsList().filter((q) => q.published && (!req.query.topic || q.topic === req.query.topic)).map((q) => publicQuestion(q)) });
+    res.json({ questions: questionsList().filter((q) => q.published && (!req.query.topic || q.topic === req.query.topic)).map((q) => publicQuestion(q, false, req.contentLanguage)) });
   });
   router.post('/api/practice/:id/answer', (req, res) => {
     const body = validated(z.object({ optionId }).strict(), req.body, res); if (!body) return;
     const q = getQuestion(req.params.id)?.question;
     if (!q?.published) return res.status(404).json({ error: 'Question not found' });
     if (!q.options.some((o) => o.id === body.optionId)) return res.status(400).json({ error: 'Unknown option' });
-    res.json({ correct: body.optionId === q.correctOptionId, correctOptionId: q.correctOptionId, explanation: q.explanation, misconception: q.misconception, sourceTags: q.sourceTags });
+    const localized = localizeQuestion(q, req.contentLanguage);
+    res.json({ correct: body.optionId === q.correctOptionId, correctOptionId: q.correctOptionId, explanation: localized.explanation, misconception: localized.misconception, sourceTags: q.sourceTags, language: localized.language, requestedLanguage: req.contentLanguage });
   });
   if (enableRateLimits) router.use('/api/auth/login', rateLimit({ windowMs: 15 * 60_000, limit: 8, standardHeaders: 'draft-7', legacyHeaders: false, message: { error: 'Too many login attempts. Try again in 15 minutes.' } }));
   // An account-level throttle complements IP limits, including attempts from changing IPs.
@@ -277,10 +319,10 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
     saveExam(exam);
   }
   function expire(exam) { if (exam.status === 'active' && now() >= exam.deadline) advance(exam, null, true); return exam; }
-  function examState(exam) {
-    const state = { id: exam.id, status: exam.status, topic: exam.topic, total: exam.snapshot.length, index: exam.current_index, secondsPerQuestion: exam.seconds, serverNow: now(), deadline: exam.deadline, question: exam.status === 'active' ? publicQuestion(exam.snapshot[exam.current_index], true) : null, answered: exam.answers.length };
+  function examState(exam, language) {
+    const state = { id: exam.id, status: exam.status, topic: exam.topic, total: exam.snapshot.length, index: exam.current_index, secondsPerQuestion: exam.seconds, serverNow: now(), deadline: exam.deadline, question: exam.status === 'active' ? publicQuestion(exam.snapshot[exam.current_index], true, language) : null, answered: exam.answers.length };
     if (exam.status === 'completed') {
-      const answers = exam.snapshot.map((q, i) => ({ question: publicQuestion(q, true), selectedOptionId: exam.answers[i]?.selectedOptionId || null, correctOptionId: q.correctOptionId, correct: exam.answers[i]?.selectedOptionId === q.correctOptionId && !exam.answers[i]?.timedOut, timedOut: !!exam.answers[i]?.timedOut }));
+      const answers = exam.snapshot.map((q, i) => ({ question: publicQuestion(q, true, language), selectedOptionId: exam.answers[i]?.selectedOptionId || null, correctOptionId: q.correctOptionId, correct: exam.answers[i]?.selectedOptionId === q.correctOptionId && !exam.answers[i]?.timedOut, timedOut: !!exam.answers[i]?.timedOut }));
       state.result = { correct: answers.filter((a) => a.correct).length, total: exam.snapshot.length, answers };
     }
     return state;
@@ -298,7 +340,7 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
     for (let i = bank.length - 1; i > 0; i--) { const j = randomInt(i + 1); [bank[i], bank[j]] = [bank[j], bank[i]]; }
     const id = randomUUID(); const time = now();
     // Exams never need hints or explanations; do not duplicate those fields on disk.
-    const snapshot = JSON.stringify(bank.slice(0, body.count).map((q) => ({ ...publicQuestion(q, true), correctOptionId: q.correctOptionId })));
+    const snapshot = JSON.stringify(bank.slice(0, body.count).map(snapshotQuestion));
     const snapshotBytes = Buffer.byteLength(snapshot);
     if (snapshotBytes > limits.maxExamSnapshotBytes) throw storageLimit('The selected exam content exceeds the size limit. Please contact a moderator or choose fewer questions.');
     transaction(db, () => {
@@ -306,15 +348,15 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
       if (usage.count >= limits.maxExams || usage.bytes + snapshotBytes > limits.maxTotalExamSnapshotBytes) throw storageLimit('Exam storage is at capacity. Please try again later; existing exams can continue.');
       db.prepare('INSERT INTO exams(id,session_id,topic,seconds,snapshot,deadline,created_at) VALUES(?,?,?,?,?,?,?)').run(id, req.session.id, body.topic, body.secondsPerQuestion, snapshot, time + body.secondsPerQuestion * 1000, time);
     });
-    res.status(201).json(examState(loadExam(req, id)));
+    res.status(201).json(examState(loadExam(req, id), req.contentLanguage));
   });
   router.get('/api/exams/current', (req, res) => {
     const active = db.prepare("SELECT id FROM exams WHERE session_id=? AND status='active' ORDER BY created_at DESC LIMIT 1").get(req.session.id);
-    res.json(active ? examState(expire(loadExam(req, active.id))) : { exam: null });
+    res.json(active ? examState(expire(loadExam(req, active.id)), req.contentLanguage) : { exam: null });
   });
   router.get('/api/exams/:id', (req, res) => {
     const exam = loadExam(req, req.params.id); if (!exam) return res.status(404).json({ error: 'Exam not found' });
-    res.json(examState(expire(exam)));
+    res.json(examState(expire(exam), req.contentLanguage));
   });
   router.post('/api/exams/:id/answer', (req, res) => {
     const body = validated(z.object({ questionId: slug, optionId: optionId.nullable() }).strict(), req.body, res); if (!body) return;
@@ -323,7 +365,7 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
     const question = exam.snapshot[exam.current_index];
     if (question.id !== body.questionId) return res.status(409).json({ error: 'Question is no longer current. Refresh the exam.' });
     if (body.optionId && !question.options.some((o) => o.id === body.optionId)) return res.status(400).json({ error: 'Unknown option' });
-    advance(exam, body.optionId, now() >= exam.deadline); res.json(examState(exam));
+    advance(exam, body.optionId, now() >= exam.deadline); res.json(examState(exam, req.contentLanguage));
   });
   router.post('/api/exams/:id/finish', (req, res) => {
     if (!validated(z.object({}).strict(), req.body, res)) return;
@@ -333,7 +375,7 @@ export function createApp({ db, lessons = [], sources = [], basePath = '', appOr
       while (exam.answers.length < exam.snapshot.length) exam.answers.push({ selectedOptionId: null, timedOut: currentExpired && exam.answers.length === exam.current_index });
       exam.current_index = exam.snapshot.length; exam.status = 'completed'; exam.deadline = null; saveExam(exam);
     }
-    res.json(examState(exam));
+    res.json(examState(exam, req.contentLanguage));
   });
 
   router.use('/api/mod', needModerator);

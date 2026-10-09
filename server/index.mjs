@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createApp, createDatabase, pruneStorage, storageLimitsFromEnv } from './app.mjs';
 import { questions } from '../content/questions.mjs';
-import { lessons, sources } from '../content/lessons.mjs';
+import { lessons, sources, lessonsNl, sourcesNl } from '../content/lessons.mjs';
 
 const projectDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const production = process.env.NODE_ENV === 'production';
@@ -13,7 +13,7 @@ if (production && (!secureCookies || !appOrigin.startsWith('https://'))) throw n
 if (secureCookies && !appOrigin.startsWith('https://')) throw new Error('Secure cookies require HTTPS; set COOKIE_SECURE=false only for local development or explicitly authorized HTTP');
 const limits = storageLimitsFromEnv();
 const db = createDatabase({ filename: path.join(process.env.DATA_DIR || path.join(projectDir, 'data'), 'edutech.sqlite'), questions, limits });
-const app = createApp({ db, lessons, sources, basePath: process.env.BASE_PATH || '/edutechproject', appOrigin, secureCookies, trustProxy: process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false, distDir: path.join(projectDir, 'dist'), limits });
+const app = createApp({ db, lessons, sources, lessonsNl, sourcesNl, basePath: process.env.BASE_PATH || '/edutechproject', appOrigin, secureCookies, trustProxy: process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false, distDir: path.join(projectDir, 'dist'), limits });
 const port = Number(process.env.PORT || 3101);
 const server = app.listen(port, process.env.HOST || '127.0.0.1', () => console.log(`EduTechProject listening on ${process.env.HOST || '127.0.0.1'}:${port}`));
 server.requestTimeout = 30_000;

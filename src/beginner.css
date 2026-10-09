@@ -1,0 +1,11 @@
+.beginner-start { display: flex; gap: 18px; padding: 24px 28px; margin: 0 0 38px; border: 1px solid var(--line); border-radius: 18px; background: #f0f2e7; }
+.beginner-start-icon { color: var(--ink); background: #e0e7d2; width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 13px; }
+.beginner-start h2 { font-size: 20px; margin: 0 0 7px; }
+.beginner-start p { color: var(--text-body); font-size: 14px; line-height: 1.7; margin: 0; max-width: 750px; }
+.beginner-start-links { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 14px; }
+.lesson-reader > .vocabulary-hint { margin: 20px 0; }
+.lesson-section .lesson-visual { margin: 24px 0; }
+.word-preview-more { margin-top: 14px; }
+.word-preview-more summary { cursor: pointer; color: var(--text-body); font-size: 13px; padding: 8px 0; }
+.word-preview-more[open] .word-preview-grid { margin-top: 10px; }
+@media (max-width: 600px) { .beginner-start { padding: 20px; gap: 12px; } .beginner-start-icon { display: none; } .beginner-start h2 { font-size: 18px; } }

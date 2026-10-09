@@ -16,6 +16,8 @@ const bank = () => Array.from({ length: 40 }, (_, i) => question(`q${i}`, i < 20
 const origin = 'https://edutech.example';
 const base = '/edutechproject';
 const password = 'A long test-only password!';
+const dutchVariant = () => ({ prompt: 'Welk getal moet je invullen voor x?', options: [{ id: 'a', text: 'Drie', math: '3' }, { id: 'b', text: 'Zeven', math: '7' }], hint: 'Maak de optelling ongedaan.', explanation: ['Trek aan beide kanten twee af.'], misconception: 'Doe aan beide kanten hetzelfde.' });
+const bilingualBank = () => bank().map(q => ({ ...q, translations: { nl: dutchVariant() } }));
 
 async function fixture(t, options = {}) {
   const dir = mkdtempSync(path.join(tmpdir(), 'edutech-test-'));
@@ -23,7 +25,7 @@ async function fixture(t, options = {}) {
   let clock = 1_800_000_000_000;
   const db = createDatabase({ filename, questions: options.questions || bank() });
   await provisionUser(db, { username: 'moderator', password, role: 'moderator' });
-  const app = createApp({ db, basePath: base, appOrigin: origin, secureCookies: true, now: () => clock, enableRateLimits: options.rateLimits || false, limits: options.limits || {} });
+  const app = createApp({ db, lessons: options.lessons || [], lessonsNl: options.lessonsNl || [], sources: options.sources || [], sourcesNl: options.sourcesNl || [], basePath: base, appOrigin: origin, secureCookies: true, now: () => clock, enableRateLimits: options.rateLimits || false, limits: options.limits || {} });
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const url = `http://127.0.0.1:${server.address().port}${base}`;
@@ -45,6 +47,83 @@ async function fixture(t, options = {}) {
   }
   return { db, filename, client, now: () => clock, clock: (advance) => { clock += advance; }, url };
 }
+
+test('Dutch is the content default; language variants never expose nested answer keys or learning feedback', async t => {
+  const f = await fixture(t, { questions: bilingualBank(), lessons: [{ id: 'l1', title: 'An equation' }], lessonsNl: [{ id: 'l1', title: 'Een vergelijking' }], sources: [{ id: 's1', application: 'English' }], sourcesNl: [{ id: 's1', application: 'Nederlands' }] });
+  const c = f.client(); await c.init();
+  assert.equal((await c.request('/api/content')).data.lessons[0].title, 'Een vergelijking');
+  assert.equal((await c.request('/api/content?lang=en')).data.lessons[0].title, 'An equation');
+  for (const lang of ['nl', 'en']) {
+    const bankResponse = await c.request(`/api/questions?topic=equations&lang=${lang}`);
+    const q = bankResponse.data.questions[0];
+    assert.equal(q.language, lang); assert.equal(q.requestedLanguage, lang);
+    assert.equal(q.prompt, lang === 'nl' ? dutchVariant().prompt : 'Solve for x.');
+    assert.ok(!('translations' in q) && !('explanation' in q) && !('correctOptionId' in q));
+    const answered = await c.request(`/api/practice/${q.id}/answer?lang=${lang}`, { method: 'POST', body: { optionId: 'a' } });
+    assert.equal(answered.data.correct, true);
+    assert.equal(answered.data.explanation[0], lang === 'nl' ? dutchVariant().explanation[0] : 'Subtract two from both sides.');
+  }
+  assert.equal((await c.request('/api/questions?lang=fr')).status, 400);
+  assert.equal((await c.request('/api/content?lang=nl&lang=en')).status, 400);
+});
+
+test('changing exam language preserves question, answer selection semantics and deadline without hint leaks', async t => {
+  const f = await fixture(t, { questions: bilingualBank() }); const c = f.client(); await c.init();
+  const start = await c.request('/api/exams?lang=nl', { method: 'POST', body: { topic: 'mixed', count: 10, secondsPerQuestion: 60 } });
+  assert.equal(start.status, 201); const exam = start.data;
+  assert.equal(exam.question.prompt, dutchVariant().prompt);
+  f.clock(5000);
+  const english = (await c.request(`/api/exams/${exam.id}?lang=en`)).data;
+  assert.equal(english.question.prompt, 'Solve for x.');
+  assert.equal(english.question.id, exam.question.id); assert.equal(english.index, exam.index); assert.equal(english.deadline, exam.deadline);
+  for (const state of [exam, english]) {
+    assert.ok(!JSON.stringify(state).includes('correctOptionId'));
+    assert.ok(!JSON.stringify(state).includes('explanation'));
+    assert.ok(!JSON.stringify(state).includes('translations'));
+    assert.equal(state.question.hint, '');
+  }
+  const snapshot = JSON.parse(f.db.prepare('SELECT snapshot FROM exams WHERE id=?').get(exam.id).snapshot);
+  assert.ok(snapshot[0].translations.nl);
+  assert.ok(!JSON.stringify(snapshot).includes('explanation'));
+  assert.ok(!JSON.stringify(snapshot).includes(dutchVariant().hint));
+  await c.request(`/api/exams/${exam.id}/answer?lang=en`, { method: 'POST', body: { questionId: exam.question.id, optionId: 'a' } });
+  const result = (await c.request(`/api/exams/${exam.id}/finish?lang=nl`, { method: 'POST', body: {} })).data;
+  assert.equal(result.result.correct, 1);
+  assert.equal(result.result.answers[0].question.prompt, dutchVariant().prompt);
+  assert.ok(!JSON.stringify(result).includes('explanation'));
+});
+
+test('translation validation rejects mismatched options, extra keys and unsafe text; missing translations are explicit', async t => {
+  const valid = { ...question(), translations: { nl: dutchVariant() } };
+  questionSchema.parse(valid);
+  assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), correctOptionId: 'b' } } }).success, false);
+  assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), prompt: '<script>alert(1)</script>' } } }).success, false);
+  assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), options: [...dutchVariant().options].reverse() } } }).success, false);
+  for (const field of ['prompt', 'hint', 'misconception']) assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), [field]: ' ' } } }).success, false);
+  assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), explanation: [' '] } } }).success, false);
+  assert.equal(questionSchema.safeParse({ ...valid, translations: { nl: { ...dutchVariant(), options: dutchVariant().options.map(o => ({ ...o, text: '', math: '' })) } } }).success, false);
+  const f = await fixture(t); const c = f.client();
+  const q = (await c.request('/api/questions?lang=nl')).data.questions[0];
+  assert.equal(q.requestedLanguage, 'nl'); assert.equal(q.language, 'en');
+});
+
+test('seed translation migration is idempotent, audited and never overwrites edited questions', t => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'edutech-translation-test-')); const filename = path.join(dir, 'data.sqlite');
+  const original = question('untouched'); const edited = question('edited');
+  let db = createDatabase({ filename, questions: [original, edited] });
+  db.prepare('UPDATE questions SET data=? WHERE id=?').run(JSON.stringify({ ...edited, prompt: 'Teacher wording to preserve' }), edited.id);
+  db.close();
+  const translatedSeeds = [original, edited].map(q => ({ ...q, translations: { nl: dutchVariant() } }));
+  db = createDatabase({ filename, questions: translatedSeeds });
+  assert.equal(JSON.parse(db.prepare('SELECT data FROM questions WHERE id=?').get(original.id).data).translations.nl.prompt, dutchVariant().prompt);
+  assert.equal(JSON.parse(db.prepare('SELECT data FROM questions WHERE id=?').get(edited.id).data).prompt, 'Teacher wording to preserve');
+  assert.equal(db.prepare("SELECT count(*) AS count FROM audit WHERE action='question.translation'").get().count, 1);
+  assert.equal(db.prepare('SELECT count(*) AS count FROM question_revisions').get().count, 2);
+  db.close();
+  db = createDatabase({ filename, questions: translatedSeeds });
+  assert.equal(db.prepare("SELECT count(*) AS count FROM audit WHERE action='question.translation'").get().count, 1);
+  db.close(); rmSync(dir, { recursive: true, force: true });
+});
 
 test('public question DTO strips answers, explanations and misconceptions; headers and cookie are hardened', async (t) => {
   const f = await fixture(t); const c = f.client(); const session = await c.init();

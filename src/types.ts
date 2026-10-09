@@ -4,8 +4,9 @@ export type Session = { csrfToken: string; user: null | { username: string; role
 export type Source = { id: string; authors: string; year: number; title: string; url: string; application: string; limitation: string };
 export type Lesson = {
   id: string; topic: Topic; title: string; summary: string; minutes: number;
+  words?: string[];
   sections: {
-    title: string; body: string[]; math?: string;
+    title: string; body: string[]; math?: string; visual?: string;
     example?: { prompt: string; steps: { math: string; reason: string }[]; check?: string };
     comparison?: { left: { title: string; steps: string[] }; right: { title: string; steps: string[] } };
     sourceTags: string[];
@@ -13,9 +14,10 @@ export type Lesson = {
   checkpoint: { prompt: string; options: string[]; correct: number; explanation: string };
   sourceTags: string[];
 };
-export type PublicQuestion = { id: string; topic: Topic; difficulty: 1 | 2 | 3; prompt: string; math?: string; options: { id: string; text: string; math?: string }[]; hint: string; sourceTags: string[]; published?: boolean };
-export type Question = PublicQuestion & { correctOptionId: string; explanation: string[]; misconception: string; published: boolean };
-export type PracticeResult = { correct: boolean; correctOptionId: string; explanation: string[]; misconception: string; sourceTags: string[] };
+export type PublicQuestion = { id: string; topic: Topic; difficulty: 1 | 2 | 3; prompt: string; math?: string; options: { id: string; text: string; math?: string }[]; hint: string; sourceTags: string[]; published?: boolean; language?: 'nl' | 'en'; requestedLanguage?: 'nl' | 'en' };
+export type QuestionTranslation = { prompt: string; options: PublicQuestion['options']; hint: string; explanation: string[]; misconception: string };
+export type Question = PublicQuestion & { correctOptionId: string; explanation: string[]; misconception: string; published: boolean; translations?: { nl?: QuestionTranslation } };
+export type PracticeResult = { correct: boolean; correctOptionId: string; explanation: string[]; misconception: string; sourceTags: string[]; language?: 'nl' | 'en'; requestedLanguage?: 'nl' | 'en' };
 export type ExamState = {
   id: string; status: 'active' | 'completed'; topic: string; total: number; index: number; secondsPerQuestion: number;
   serverNow: number; deadline: number | null; question: PublicQuestion | null; answered: number;

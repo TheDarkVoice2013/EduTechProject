@@ -1,0 +1,15 @@
+.language-switch { display: flex; gap: 3px; padding: 3px; border: 1px solid var(--line, #d1d6cf); border-radius: 9px; background: #f7f8f4; flex-shrink: 0; }
+.language-switch button { border: 0; background: transparent; color: #34443a; min-height: 40px; padding: 7px 11px; font: inherit; font-size: .8rem; font-weight: 650; cursor: pointer; border-radius: 6px; }
+.language-switch button[aria-pressed="true"] { background: #244b38; color: #fff; }
+.language-switch button:focus-visible { outline: 3px solid #806c28; outline-offset: 2px; }
+.topbar .topbar-note { margin-left: auto; margin-right: 16px; }
+.editor-language-note { padding: 14px 16px; background: #edf2e9; border-radius: 8px; color: #293c2e; line-height: 1.55; margin-bottom: 20px; }
+.editor-language-tabs { display: flex; gap: 8px; margin: 18px 0; }
+.editor-language-tabs button { min-height: 44px; }
+.language-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+.editor-language-note p { margin: 0 0 8px; }
+.translation-toggle { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; cursor: pointer; }
+.translation-toggle input { margin-top: 5px; flex-shrink: 0; }
+.translation-toggle small { display: block; line-height: 1.5; margin-top: 5px; color: #3c4940; }
+@media (max-width: 1050px) { .topbar .topbar-note { display: none; } .topbar .language-switch { margin-left: auto; } }
+@media (max-width: 600px) { .topbar { gap: 8px; padding-left: 15px; padding-right: 15px; } .breadcrumb > span, .breadcrumb > svg { display: none; } .breadcrumb strong { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .78rem; } .language-switch button { padding: 7px 8px; font-size: .75rem; } }

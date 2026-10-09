@@ -1,0 +1,187 @@
+[
+  {
+    "id": "expression",
+    "nl": { "term": "uitdrukking", "aliases": ["uitdrukkingen"], "meaning": "Een stukje wiskundige tekst met getallen, letters of rekentekens, zonder een uitspraak dat twee kanten gelijk zijn.", "example": "3x + 5 betekent: neem een getal x, vermenigvuldig het met 3 en tel er 5 bij op.", "math": "3x+5" },
+    "en": { "term": "expression", "aliases": ["expressions"], "meaning": "A piece of mathematical writing with numbers, letters or calculation signs. By itself, it does not say that two sides are equal.", "example": "3x + 5 means: take a number x, multiply it by 3, then add 5.", "math": "3x+5" }
+  },
+  {
+    "id": "set",
+    "nl": { "term": "verzameling", "aliases": ["verzamelingen", "oplossingsverzameling"], "meaning": "Een groep bij elkaar horende dingen, bijvoorbeeld alle getallen die als antwoord mogen. De volgorde maakt niet uit.", "example": "De verzameling {2, 4, 6} bevat drie getallen. De oplossingsverzameling van x + 2 = 5 is {3}.", "math": "\\{2,4,6\\}" },
+    "en": { "term": "set", "aliases": ["sets", "solution set"], "meaning": "A collection of things, such as all the numbers allowed as answers. Their order does not matter.", "example": "The set {2, 4, 6} contains three numbers. The solution set of x + 2 = 5 is {3}.", "math": "\\{2,4,6\\}" }
+  },
+  {
+    "id": "operation",
+    "nl": { "term": "bewerking", "aliases": ["bewerkingen", "rekenbewerking", "rekenbewerkingen"], "meaning": "Een rekenhandeling, zoals optellen, aftrekken, vermenigvuldigen of delen.", "example": "Bij x + 4 is de bewerking: tel 4 op." },
+    "en": { "term": "operation", "aliases": ["operations"], "meaning": "An action in a calculation, such as adding, subtracting, multiplying or dividing.", "example": "In x + 4, the operation is: add 4." }
+  },
+  {
+    "id": "substitute",
+    "nl": { "term": "invullen", "aliases": ["substitueren", "substitutie"], "meaning": "Een letter vervangen door een getal of een andere gegeven berekening, overal waar die letter staat.", "example": "Vul 3 in voor x in 2x + 1: je krijgt 2 × 3 + 1 = 7.", "math": "x=3:\\quad 2x+1=2\\cdot3+1=7" },
+    "en": { "term": "substitute", "aliases": ["substitution", "substituting"], "meaning": "Replace a letter with a number or another given calculation, everywhere that letter appears.", "example": "Substitute 3 for x in 2x + 1: you get 2 × 3 + 1 = 7.", "math": "x=3:\\quad 2x+1=2\\cdot3+1=7" }
+  },
+  {
+    "id": "equation",
+    "nl": { "term": "vergelijking", "aliases": ["vergelijkingen"], "meaning": "Een wiskundige uitspraak met een =-teken: de linkerkant en rechterkant moeten dezelfde waarde hebben. Vaak zoek je welk getal een letter moet zijn.", "example": "Bij x + 2 = 5 zoek je het getal dat samen met 2 precies 5 maakt.", "math": "x+2=5" },
+    "en": { "term": "equation", "aliases": ["equations"], "meaning": "A mathematical statement with an = sign: the left and right sides must have the same value. Often you are finding which number a letter must stand for.", "example": "In x + 2 = 5, find the number that makes 5 when you add 2.", "math": "x+2=5" }
+  },
+  {
+    "id": "equality",
+    "nl": { "term": "gelijkheid", "aliases": ["gelijkteken"], "meaning": "Het feit dat twee kanten dezelfde waarde hebben. Het teken = betekent ‘is gelijk aan’, niet ‘hier komt het antwoord’.", "example": "9 + 6 = 8 + 7 is waar: beide kanten zijn 15.", "math": "9+6=8+7" },
+    "en": { "term": "equality", "aliases": ["equals sign"], "meaning": "The fact that two sides have the same value. The = sign means ‘is equal to’, not ‘the answer comes next’.", "example": "9 + 6 = 8 + 7 is true: both sides are 15.", "math": "9+6=8+7" }
+  },
+  {
+    "id": "unknown",
+    "nl": { "term": "onbekende", "aliases": ["onbekenden", "variabele"], "meaning": "Een getal dat je nog niet weet. We geven het vaak een letter, zoals x. Binnen dezelfde vergelijking staat x telkens voor hetzelfde getal.", "example": "In x + 2 = 5 is x de onbekende. Hier moet x gelijk zijn aan 3." },
+    "en": { "term": "unknown", "aliases": ["unknowns", "variable"], "meaning": "A number you do not know yet. We often give it a letter such as x. Within the same equation, each x stands for the same number.", "example": "In x + 2 = 5, x is the unknown. Here x must equal 3." }
+  },
+  {
+    "id": "solution",
+    "nl": { "term": "oplossing", "aliases": ["oplossingen"], "meaning": "Een getal dat de oorspronkelijke vergelijking waar maakt als je het voor de letter invult.", "example": "3 is de oplossing van x + 2 = 5, want 3 + 2 is inderdaad 5." },
+    "en": { "term": "solution", "aliases": ["solutions"], "meaning": "A number that makes the original equation true when you put it in place of the letter.", "example": "3 is the solution of x + 2 = 5 because 3 + 2 really does equal 5." }
+  },
+  {
+    "id": "coefficient",
+    "nl": { "term": "coëfficiënt", "aliases": ["coëfficiënten", "coefficient"], "meaning": "Het getal waarmee een letter wordt vermenigvuldigd. Een minteken hoort erbij.", "example": "In −4x is de coëfficiënt −4. Er staat dus −4 × x.", "math": "-4x=(-4)\\cdot x" },
+    "en": { "term": "coefficient", "aliases": ["coefficients"], "meaning": "The number multiplying a letter. Include its minus sign, if it has one.", "example": "In −4x, the coefficient is −4. It means −4 × x.", "math": "-4x=(-4)\\cdot x" }
+  },
+  {
+    "id": "term",
+    "nl": { "term": "term", "aliases": ["termen"], "meaning": "Een deel van een berekening dat door + of − van de volgende delen wordt gescheiden, buiten haakjes. Het teken hoort bij het deel erna.", "example": "In 3x − 4 zijn de termen 3x en −4. In 3x + 2x tel je drie keer x en twee keer x op: samen 5x." },
+    "en": { "term": "term", "aliases": ["terms", "like terms"], "meaning": "A part of a calculation separated from other parts by + or − outside brackets. Keep the sign with the part that follows it.", "example": "In 3x − 4, the terms are 3x and −4. In 3x + 2x, three lots of x plus two lots of x make 5x." }
+  },
+  {
+    "id": "inverse",
+    "nl": { "term": "omgekeerde bewerking", "aliases": ["inverse", "inverse bewerking", "omgekeerde bewerkingen"], "meaning": "Een rekenhandeling die een eerdere rekenhandeling ongedaan maakt. Je moet de oorspronkelijke waarde terugkrijgen.", "example": "Je maakt ‘tel 5 op’ ongedaan met ‘trek 5 af’. Vermenigvuldigen met 3 maak je ongedaan door te delen door 3." },
+    "en": { "term": "inverse operation", "aliases": ["inverse", "inverse operations"], "meaning": "A calculation that undoes an earlier calculation. It takes you back to the original value.", "example": "‘Subtract 5’ undoes ‘add 5’. Dividing by 3 undoes multiplying by 3." }
+  },
+  {
+    "id": "exponent",
+    "nl": { "term": "exponent", "aliases": ["exponenten"], "meaning": "Het kleine getal rechtsboven. Bij een positief geheel getal vertelt het hoe vaak je het grondtal als vermenigvuldigingsfactor gebruikt. Voor nul en negatieve getallen gelden aanvullende regels.", "example": "In 2³ is 3 de exponent: 2 × 2 × 2 = 8. Verder is 2⁰ = 1 en 2⁻¹ = 1/2.", "math": "2^3=2\\cdot2\\cdot2=8" },
+    "en": { "term": "exponent", "aliases": ["exponents"], "meaning": "The small raised number. For a positive whole number, it tells you how many copies of the base to multiply. Zero and negative exponents use additional rules.", "example": "In 2³, 3 is the exponent: 2 × 2 × 2 = 8. Also, 2⁰ = 1 and 2⁻¹ = 1/2.", "math": "2^3=2\\cdot2\\cdot2=8" }
+  },
+  {
+    "id": "power",
+    "nl": { "term": "macht", "aliases": ["machten"], "meaning": "Een schrijfwijze met een grondtal en een kleine exponent rechtsboven, zoals 2³. Bij positieve gehele exponenten is dit een korte manier om herhaald vermenigvuldigen te schrijven.", "example": "De macht 2³ betekent 2 × 2 × 2 = 8. Bij de vraag ‘2 tot welke macht geeft 8?’ zoek je de exponent: 3.", "math": "2^3=8" },
+    "en": { "term": "power", "aliases": ["powers"], "meaning": "A form with a base and a small raised exponent, such as 2³. For positive whole exponents it is a short way to write repeated multiplication.", "example": "The power 2³ means 2 × 2 × 2 = 8. In the question ‘2 to what power gives 8?’, you are looking for the exponent: 3.", "math": "2^3=8" }
+  },
+  {
+    "id": "base",
+    "nl": { "term": "grondtal", "aliases": ["grondtallen", "basis"], "meaning": "Het getal dat bij een macht onder de exponent staat. Bij een logaritme staat hetzelfde getal klein rechtsonder bij ‘log’.", "example": "In 2³ en log₂(8) is 2 het grondtal.", "math": "2^3=8\\quad\\Longleftrightarrow\\quad\\log_2(8)=3" },
+    "en": { "term": "base", "aliases": ["bases"], "meaning": "The number below the exponent in a power. In a logarithm, the same number is written small at the lower right of ‘log’.", "example": "In 2³ and log₂(8), 2 is the base.", "math": "2^3=8\\quad\\Longleftrightarrow\\quad\\log_2(8)=3" }
+  },
+  {
+    "id": "argument",
+    "nl": { "term": "argument", "aliases": ["argumenten", "invoer"], "meaning": "Het getal of de berekening die je in een rekenregel stopt. Bij een logaritme is dit alles wat tussen de haakjes na ‘log’ staat.", "example": "In log₂(x − 3) is x − 3 het argument, niet alleen x. Dit moet groter zijn dan nul.", "math": "\\log_2(\\underbrace{x-3}_{\\text{argument}})" },
+    "en": { "term": "argument", "aliases": ["arguments", "input"], "meaning": "The number or calculation you feed into a mathematical rule. For a logarithm, it is everything inside the brackets after ‘log’.", "example": "In log₂(x − 3), the argument is x − 3, not just x. It must be greater than zero.", "math": "\\log_2(\\underbrace{x-3}_{\\text{argument}})" }
+  },
+  {
+    "id": "domain",
+    "nl": { "term": "domein", "aliases": ["toegestane invoer"], "meaning": "Alle getallen die je mag invullen zonder een onmogelijke of niet toegestane berekening te krijgen.", "example": "Voor log₂(x − 3) mag je alleen getallen groter dan 3 invullen. Het domein is dus x > 3.", "math": "x>3" },
+    "en": { "term": "domain", "aliases": ["allowed inputs"], "meaning": "All the numbers you are allowed to put in without getting an impossible or disallowed calculation.", "example": "For log₂(x − 3), only numbers greater than 3 are allowed. Its domain is x > 3.", "math": "x>3" }
+  },
+  {
+    "id": "logarithm",
+    "nl": { "term": "logaritme", "aliases": ["logaritmen", "logaritmes", "log"], "meaning": "Een vraag naar de exponent: tot welke macht moet je het grondtal verheffen om de gegeven invoer te krijgen? In deze lessen moet de invoer groter dan nul zijn.", "example": "log₂(8) vraagt: 2 tot welke macht is 8? Het antwoord is 3, want 2³ = 8.", "math": "\\log_2(8)=3" },
+    "en": { "term": "logarithm", "aliases": ["logarithms", "log"], "meaning": "A question asking for an exponent: what power of the base gives the input number? In these lessons the input must be greater than zero.", "example": "log₂(8) asks: 2 to what power gives 8? The answer is 3 because 2³ = 8.", "math": "\\log_2(8)=3" }
+  },
+  {
+    "id": "real-number",
+    "nl": { "term": "reëel getal", "aliases": ["reële getallen", "reëel"], "meaning": "Een getal dat op de gewone getallenlijn past. Dit omvat negatieve getallen, nul, positieve getallen, breuken en getallen met oneindig veel decimalen.", "example": "−3, 0, 1/2, 2,5 en π zijn allemaal reële getallen." },
+    "en": { "term": "real number", "aliases": ["real numbers", "real"], "meaning": "A number that fits on the usual number line. This includes negative numbers, zero, positive numbers, fractions and numbers with endlessly many decimal digits.", "example": "−3, 0, 1/2, 2.5 and π are all real numbers." }
+  },
+  {
+    "id": "fraction",
+    "nl": { "term": "breuk", "aliases": ["breuken"], "meaning": "Een manier om een deling te schrijven: het getal boven de streep gedeeld door het getal eronder. Het onderste getal mag niet nul zijn.", "example": "3/4 betekent 3 gedeeld door 4, oftewel 0,75.", "math": "\\frac34=3\\div4" },
+    "en": { "term": "fraction", "aliases": ["fractions"], "meaning": "A way to write division: the number above the line divided by the number below it. The bottom number cannot be zero.", "example": "3/4 means 3 divided by 4, which is 0.75.", "math": "\\frac34=3\\div4" }
+  },
+  {
+    "id": "numerator",
+    "nl": { "term": "teller", "aliases": ["tellers"], "meaning": "Het getal of de berekening boven de breukstreep. Dit is wat je deelt door het onderste getal.", "example": "In 3/4 is 3 de teller.", "math": "\\frac{\\overbrace{3}^{\\text{teller}}}{4}" },
+    "en": { "term": "numerator", "aliases": ["numerators"], "meaning": "The number or calculation above a fraction line. It is what you divide by the bottom number.", "example": "In 3/4, the numerator is 3.", "math": "\\frac{\\overbrace{3}^{\\text{numerator}}}{4}" }
+  },
+  {
+    "id": "denominator",
+    "nl": { "term": "noemer", "aliases": ["noemers"], "meaning": "Het getal of de berekening onder de breukstreep. Het vertelt waardoor je deelt en mag niet nul zijn.", "example": "In 3/4 is 4 de noemer.", "math": "\\frac{3}{\\underbrace{4}_{\\text{noemer}}}" },
+    "en": { "term": "denominator", "aliases": ["denominators"], "meaning": "The number or calculation below a fraction line. It tells you what to divide by and cannot be zero.", "example": "In 3/4, the denominator is 4.", "math": "\\frac{3}{\\underbrace{4}_{\\text{denominator}}}" }
+  },
+  {
+    "id": "factor",
+    "nl": { "term": "factor", "aliases": ["factoren"], "meaning": "Een getal of een hele berekening die met iets anders wordt vermenigvuldigd.", "example": "In 3(x + 2) zijn 3 en (x + 2) de twee factoren. Je vermenigvuldigt 3 met alles wat tussen de haakjes staat." },
+    "en": { "term": "factor", "aliases": ["factors"], "meaning": "A number or a whole calculation being multiplied by something else.", "example": "In 3(x + 2), the two factors are 3 and (x + 2). You multiply 3 by everything in the brackets." }
+  },
+  {
+    "id": "expand",
+    "nl": { "term": "haakjes wegwerken", "aliases": ["uitwerken", "distributieve eigenschap"], "meaning": "Een vermenigvuldiging met haakjes uitschrijven. Vermenigvuldig elk deel binnen de haakjes met het getal ervoor.", "example": "2(x + 3) wordt 2 × x + 2 × 3, dus 2x + 6.", "math": "2(x+3)=2x+6" },
+    "en": { "term": "expand", "aliases": ["expanding", "expansion", "distributive property"], "meaning": "Write out a multiplication involving brackets. Multiply every part inside the brackets by the number outside.", "example": "2(x + 3) becomes 2 × x + 2 × 3, which is 2x + 6.", "math": "2(x+3)=2x+6" }
+  },
+  {
+    "id": "identity",
+    "nl": { "term": "identiteit", "aliases": ["identiteiten"], "meaning": "Een vergelijking die waar is voor elk getal dat je erin mag invullen, niet alleen voor één bijzondere waarde.", "example": "2(x + 3) = 2x + 6 is waar bij x = 0, bij x = 5 en bij elk ander reëel getal." },
+    "en": { "term": "identity", "aliases": ["identities"], "meaning": "An equation that is true for every number you are allowed to put in, not just one special value.", "example": "2(x + 3) = 2x + 6 is true at x = 0, at x = 5 and at every other real number." }
+  },
+  {
+    "id": "function",
+    "nl": { "term": "functie", "aliases": ["functies"], "meaning": "Een vaste rekenregel die bij elke toegestane invoer precies één uitkomst geeft.", "example": "De regel ‘vermenigvuldig met 2’ geeft bij invoer 3 de uitkomst 6. Dezelfde invoer geeft steeds dezelfde uitkomst." },
+    "en": { "term": "function", "aliases": ["functions"], "meaning": "A fixed mathematical rule that gives exactly one output for each allowed input.", "example": "The rule ‘multiply by 2’ gives an output of 6 for an input of 3. The same input always gives the same output." }
+  },
+  {
+    "id": "positive",
+    "nl": { "term": "positief", "aliases": ["positieve"], "meaning": "Groter dan nul. Nul zelf is niet positief.", "example": "0,5 en 3 zijn positief. 0 en −3 zijn dat niet.", "math": "x>0" },
+    "en": { "term": "positive", "aliases": ["strictly positive"], "meaning": "Greater than zero. Zero itself is not positive.", "example": "0.5 and 3 are positive. 0 and −3 are not.", "math": "x>0" }
+  },
+  {
+    "id": "negative",
+    "nl": { "term": "negatief", "aliases": ["negatieve"], "meaning": "Kleiner dan nul. Deze getallen staan links van nul op de getallenlijn.", "example": "−1 en −4,5 zijn negatief. Het minteken hoort bij het getal.", "math": "x<0" },
+    "en": { "term": "negative", "aliases": [], "meaning": "Less than zero. These numbers sit to the left of zero on the number line.", "example": "−1 and −4.5 are negative. The minus sign belongs to the number.", "math": "x<0" }
+  },
+  {
+    "id": "nonzero",
+    "nl": { "term": "niet nul", "aliases": ["ongelijk aan nul"], "meaning": "Elk getal behalve nul. Het mag positief of negatief zijn.", "example": "Je mag door 4 of −4 delen, maar niet door 0.", "math": "x\\ne0" },
+    "en": { "term": "nonzero", "aliases": ["non-zero"], "meaning": "Any number except zero. It may be positive or negative.", "example": "You may divide by 4 or −4, but not by 0.", "math": "x\\ne0" }
+  },
+  {
+    "id": "equivalent",
+    "nl": { "term": "gelijkwaardig", "aliases": ["gelijkwaardige", "equivalent", "equivalente"], "meaning": "Bij vergelijkingen: precies dezelfde getallen werken als antwoord in beide vergelijkingen.", "example": "x + 2 = 5 en x = 3 zijn gelijkwaardig. Allebei hebben ze alleen 3 als oplossing.", "math": "x+2=5\\quad\\Longleftrightarrow\\quad x=3" },
+    "en": { "term": "equivalent", "aliases": ["equivalence"], "meaning": "For equations: exactly the same numbers work as answers in both equations.", "example": "x + 2 = 5 and x = 3 are equivalent. Both have only 3 as their solution.", "math": "x+2=5\\quad\\Longleftrightarrow\\quad x=3" }
+  },
+  {
+    "id": "product",
+    "nl": { "term": "product", "aliases": ["producten"], "meaning": "De uitkomst van een vermenigvuldiging.", "example": "Het product van 3 en 4 is 12, want 3 × 4 = 12." },
+    "en": { "term": "product", "aliases": ["products"], "meaning": "The result of a multiplication.", "example": "The product of 3 and 4 is 12 because 3 × 4 = 12." }
+  },
+  {
+    "id": "quotient",
+    "nl": { "term": "quotiënt", "aliases": ["quotiënten"], "meaning": "De uitkomst van een deling.", "example": "Het quotiënt van 12 en 4 is 3, want 12 ÷ 4 = 3." },
+    "en": { "term": "quotient", "aliases": ["quotients"], "meaning": "The result of a division.", "example": "The quotient of 12 and 4 is 3 because 12 ÷ 4 = 3." }
+  },
+  {
+    "id": "inequality",
+    "nl": { "term": "ongelijkheid", "aliases": ["ongelijkheden"], "meaning": "Een uitspraak die getallen vergelijkt met ‘groter dan’ of ‘kleiner dan’, in plaats van alleen ‘gelijk aan’.", "example": "x > 3 betekent groter dan 3, dus 3 mag niet. x ≥ 3 betekent 3 of groter, dus 3 mag wel.", "math": "x>3\\qquad x\\ge3" },
+    "en": { "term": "inequality", "aliases": ["inequalities"], "meaning": "A statement comparing numbers using ‘greater than’ or ‘less than’, rather than only ‘equal to’.", "example": "x > 3 means greater than 3, so 3 is excluded. x ≥ 3 means 3 or greater, so 3 is included.", "math": "x>3\\qquad x\\ge3" }
+  },
+  {
+    "id": "simplify",
+    "nl": { "term": "vereenvoudigen", "aliases": ["vereenvoudig"], "meaning": "Een berekening korter of makkelijker opschrijven zonder de waarde te veranderen.", "example": "3x + 2x kun je als 5x schrijven: drie keer hetzelfde getal plus twee keer dat getal is vijf keer dat getal.", "math": "3x+2x=5x" },
+    "en": { "term": "simplify", "aliases": ["simplifying", "simplification"], "meaning": "Write a calculation in a shorter or easier form without changing its value.", "example": "3x + 2x can be written as 5x: three lots of the same number plus two lots make five lots.", "math": "3x+2x=5x" }
+  },
+  {
+    "id": "factorise",
+    "nl": { "term": "ontbinden in factoren", "aliases": ["ontbinden"], "meaning": "Een berekening herschrijven als delen die met elkaar worden vermenigvuldigd. Dit is de omgekeerde richting van haakjes wegwerken.", "example": "x² − 2x − 8 kan worden geschreven als (x − 4)(x + 2). Werk de haakjes weg om dit te controleren.", "math": "x^2-2x-8=(x-4)(x+2)" },
+    "en": { "term": "factorise", "aliases": ["factorize", "factoring", "factorisation", "factorization"], "meaning": "Rewrite a calculation as pieces multiplied together. This goes in the opposite direction to expanding brackets.", "example": "x² − 2x − 8 can be written as (x − 4)(x + 2). Expand the brackets to check this.", "math": "x^2-2x-8=(x-4)(x+2)" }
+  },
+  {
+    "id": "candidate",
+    "nl": { "term": "mogelijk antwoord", "aliases": ["mogelijke antwoorden", "kandidaat", "kandidaten"], "meaning": "Een getal dat uit je berekening komt, maar dat je nog in de oorspronkelijke vraag moet controleren.", "example": "Als je 4 en −2 vindt, maar de oorspronkelijke vraag x > 2 vereist, valt −2 af." },
+    "en": { "term": "candidate", "aliases": ["candidates", "candidate answer"], "meaning": "A number your calculations produce that still needs to be checked in the original question.", "example": "If you find 4 and −2, but the original question requires x > 2, reject −2." }
+  },
+  {
+    "id": "common-denominator",
+    "nl": { "term": "gemeenschappelijke noemer", "aliases": ["gemeenschappelijke noemers"], "meaning": "Een getal waarin alle onderste getallen van de breuken een heel aantal keren passen. Hiermee kun je breuken met even grote stukjes schrijven.", "example": "Voor x/2 en x/3 kun je 6 gebruiken: 6 ÷ 2 = 3 en 6 ÷ 3 = 2.", "math": "\\frac{x}{2}=\\frac{3x}{6}\\qquad\\frac{x}{3}=\\frac{2x}{6}" },
+    "en": { "term": "common denominator", "aliases": ["common denominators"], "meaning": "A number that each fraction's bottom number divides into a whole number of times. It lets you write the fractions using equally sized parts.", "example": "For x/2 and x/3, you can use 6: 6 ÷ 2 = 3 and 6 ÷ 3 = 2.", "math": "\\frac{x}{2}=\\frac{3x}{6}\\qquad\\frac{x}{3}=\\frac{2x}{6}" }
+  },
+  {
+    "id": "isolate",
+    "nl": { "term": "vrijmaken", "aliases": ["isoleren", "vrijgemaakt"], "meaning": "Een vergelijking zo herschrijven dat de gekozen letter alleen aan één kant staat.", "example": "Bij 3x = 12 deel je beide kanten door 3. Dan staat x alleen: x = 4.", "math": "3x=12\\quad\\Longleftrightarrow\\quad x=4" },
+    "en": { "term": "isolate", "aliases": ["isolating", "isolated"], "meaning": "Rewrite an equation so the chosen letter stands alone on one side.", "example": "In 3x = 12, divide both sides by 3. Then x stands alone: x = 4.", "math": "3x=12\\quad\\Longleftrightarrow\\quad x=4" }
+  }
+]

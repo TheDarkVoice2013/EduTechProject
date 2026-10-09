@@ -1,4 +1,5 @@
 import type { Session } from './types';
+import { getLanguage, t } from './i18n';
 
 let csrfToken = '';
 export function rememberSession(session: Session) { csrfToken = session.csrfToken; }
@@ -9,15 +10,17 @@ export class ApiError extends Error {
 
 export async function api<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const verb = method || (body === undefined ? 'GET' : 'POST');
-  const response = await fetch(`${import.meta.env.BASE_URL}api/${path.replace(/^\//, '')}`, {
+  const url = new URL(`${import.meta.env.BASE_URL}api/${path.replace(/^\//, '')}`, window.location.origin);
+  url.searchParams.set('lang', getLanguage());
+  const response = await fetch(url, {
     method: verb,
     credentials: 'same-origin',
     headers: { Accept: 'application/json', ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(verb !== 'GET' ? { 'X-CSRF-Token': csrfToken } : {}) },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
   const data = await response.json().catch(() => null);
-  if (!response.ok) throw new ApiError(data?.error || `The request could not be completed (${response.status}). Please try again.`, response.status);
-  if (!data) throw new ApiError('The server returned an unexpected response. Please try again.', response.status);
+  if (!response.ok) throw new ApiError(data?.error || t('The request could not be completed ({status}). Please try again.', { status: response.status }), response.status);
+  if (!data) throw new ApiError(t('The server returned an unexpected response. Please try again.'), response.status);
   return data as T;
 }
-export function errorText(error: unknown) { return error instanceof Error ? error.message : 'Something went wrong. Please try again.'; }
+export function errorText(error: unknown) { return t(error instanceof Error ? error.message : 'Something went wrong. Please try again.'); }
